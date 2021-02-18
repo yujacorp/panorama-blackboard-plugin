@@ -1,0 +1,53 @@
+apply plugin: 'java'
+apply plugin: 'base'
+apply plugin: 'war'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+// configurations {
+//     b2deploy
+// }
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://bbprepo.blackboard.com/content/repositories/releases/"
+    }
+}
+
+dependencies {
+    implementation 'com.google.code.gson:gson:2.8.6'
+
+    providedCompile files( "WebContent/WEB-INF/lib/b2context-1.6.01.jar" )
+
+    providedCompile "javax.servlet:servlet-api:2.5",
+                    "javax.servlet.jsp:jsp-api:2.1"
+        
+    // Dependencies are libraries needed to build, but should not be included in the B2 WAR.
+    // You should NEVER include Learn JARs (other than webapis) in your B2.
+    providedCompile( "blackboard.platform:bb-platform:3400.0.0" ) { transitive = false }
+    providedCompile( "blackboard.platform:bb-cms-admin:3400.0.0" ) { transitive = false }
+    providedCompile( "blackboard.platform:bb-taglibs:3400.0.0" ) { transitive = false }
+
+    compile ('net.sourceforge.stripes:stripes:1.6.0') {
+        exclude module: 'log4j' // The log4j interface is implemented by org.slf4j:log4j-over-slf4j
+    }
+
+    compile files('lib/bb-stripes-utils-1.1.2.jar')
+    compile files('lib/httpcore-4.3.3.jar')
+    compile files('lib/httpclient-4.3.3.jar')
+
+    // Building a Spring B2?  Use our Spring APIs!
+    // compile "blackboard.platform:bb-spring-webapi:10.1"
+
+    // Include the Blackboard security APIs for protecting your B2.
+    // providedCompile "blackboard.plugin:security:1.0:api"
+
+    // Dependencies that are only necessary at runtime so should be included in the WAR
+    // runtime "org.javassist:javassist:3.17.1-GA"
+
+    // b2deploy "org.oscelot:b2deploy-task:0.1.0"
+}
+
+// ant.taskdef(name: 'b2deploy', classname: 'org.oscelot.ant.B2DeployTask', classpath: configurations.b2deploy.asPath)
